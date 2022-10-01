@@ -1,6 +1,6 @@
 const Product = require("../models/Products");
 
-//devuelve todos los productos
+//get para todos los productos
 const getAll = async (req, res) => {
     let products = [];
     try {
@@ -13,6 +13,82 @@ const getAll = async (req, res) => {
     res.json(products);
 };
 
+// Get para traer por id o name
+
+//crear producto
+const create = async (req, res) => {
+    const { id, name, price, stock, description } = req.body;
+    const producto = new Product({
+        id,
+        name,
+        price,
+        stock,
+        description,
+    });
+    let savedProduct;
+    try {
+        savedProduct = await producto.save();
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500);
+        res.json({ msg: `Error Post: ${err}` })
+    }
+    res.json(savedProduct);
+}
+
+// Actualizar
+const actualizarProd = async (req, res) => {
+    const id = req.params.id;
+    const { name, price, stock, description } = req.body;
+    console.log(id);
+    let productoAct;
+    try {
+        productoAct = await Product.updateOne(
+            { "id": id },
+            {
+                $set: {
+                    name: name,
+                    price: price,
+                    stock: stock,
+                    description: description,
+                }
+            }
+        );
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500);
+        res.json({ msg: `Error Update: ${err}` });
+    }
+    res.json(productoAct);
+};
+
+
+//Borrar
+eliminarProd = async (req, res) => {
+    const id = req.params.id;
+    let response;
+    try {
+        response = await Product.deleteOne({ id });
+        console.log(response);
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500);
+        res.json({ msg: `Error Delete: ${err}` });
+    }
+    if (response.deletedCount === 0) {
+        return res.json({ msg: `No se encontro producto con id: ${id}` });
+    }
+
+    return res.json({ msg: `El producto borrado ${id}` });
+};
+
 module.exports = {
-    getAll
+    getAll,
+    create,
+    actualizarProd,
+    eliminarProd
+
 }
