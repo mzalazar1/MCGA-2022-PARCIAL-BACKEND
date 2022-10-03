@@ -13,7 +13,33 @@ const getAll = async (req, res) => {
     res.json(products);
 };
 
-// Get para traer por id o name
+// Get para traer por id
+const getId = async (req, res) => {
+    let products = [];
+    let id = req.params.id;
+    try {
+        products = await Product.find({ id })
+    } catch (error) {
+        console.log(error);
+        res.status(500);
+        res.json({ msg: `Error: ${error}` });
+    }
+    res.json(products);
+}
+
+//Get para traer por nombre
+const getName = async (req, res) => {
+    let products = [];
+    let name = req.params.name;
+    try {
+        products = await Product.find({ name })
+    } catch (error) {
+        console.log(error);
+        res.status(500);
+        res.json({ msg: `Error: ${error}` });
+    }
+    res.json(products);
+}
 
 //crear producto
 const create = async (req, res) => {
@@ -89,6 +115,7 @@ module.exports = {
     getAll,
     create,
     actualizarProd,
-    eliminarProd
-
+    eliminarProd,
+    getId,
+    getName
 }
