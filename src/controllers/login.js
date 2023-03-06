@@ -17,12 +17,12 @@ const login = async (req, res) => {
         if (!user) {
             throw new Error('User not found!')
         }
-        if (user.password !== password) {
-            const err = new Error('Wrong credentials!');
+        if (!bcrypt.compareSync(password, user.password)) {
+            const err = new Error('Validation error');
             err.status = 401;
             throw err;
         }
-
+        // token
         const token = jwt.sign(
             {
                 email,
@@ -54,6 +54,20 @@ const login = async (req, res) => {
         });
     }
 }
+
+//encriptar contraseña
+const hashPassword = (password) => {
+    const salt = bcrypt.genSaltSync();
+    return bcrypt.hashSync(password, salt);
+};
+const signup = async (user) => {
+    const hashedPassword = hashPassword(user.password);
+    return await esquemaUsers.create({
+        ...user,
+        password: hashedPassword,
+    });
+};
+
 const getUserData = async (req, res) => {
     const userId = req.user._id;
     try {
