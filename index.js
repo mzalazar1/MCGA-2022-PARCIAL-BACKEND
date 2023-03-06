@@ -15,7 +15,7 @@ app.use("/api", require("./src/routes"));
 
 //routes
 app.get('/', (req, res) => {
-    res.send('OK !!!');
+    res.send('OK World!');
 });
 
 

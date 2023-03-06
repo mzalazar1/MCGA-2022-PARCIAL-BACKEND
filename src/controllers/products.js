@@ -1,4 +1,4 @@
-const Product = require("../models/Products");
+const Product = require("../models/product");
 
 //get para todos los productos
 const getAll = async (req, res) => {
@@ -40,6 +40,26 @@ const getName = async (req, res) => {
     }
     res.json(products);
 }
+
+//Get por ID o por Nombre
+const getNameOid = async (req, res) => {
+    let products = [];
+    let { id = "", name = "" } = req.query;
+    try {
+        products = await Product.find({
+            $or: [
+                { id },
+                { name }
+            ]
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500);
+        res.json({ msg: `Error: ${error}` });
+    }
+    res.json(products);
+}
+
 
 //crear producto
 const create = async (req, res) => {
@@ -117,5 +137,6 @@ module.exports = {
     actualizarProd,
     eliminarProd,
     getId,
-    getName
+    getName,
+    getNameOid
 }
